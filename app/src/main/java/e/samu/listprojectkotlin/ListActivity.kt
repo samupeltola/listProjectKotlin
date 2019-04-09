@@ -13,7 +13,7 @@ import android.widget.*
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_list.*
 
-class ListActivity : AppCompatActivity() {
+class ListActivity : AppCompatActivity(), ItemRowListener {
 
     var toDoItemList: MutableList<ToDoItem>? = null
     lateinit var adapter: ToDoItemAdapter
@@ -78,7 +78,7 @@ class ListActivity : AppCompatActivity() {
         val alert = AlertDialog.Builder(this)
         val itemEditText = EditText(this)
         alert.setMessage("Add New Item")
-        alert.setTitle("Enter To Do Item Text")
+        alert.setTitle("Enter Your Item")
         alert.setView(itemEditText)
         alert.setPositiveButton("Submit") { dialog, positiveButton ->
             val todoItem = ToDoItem.create()
@@ -94,5 +94,18 @@ class ListActivity : AppCompatActivity() {
         }
         alert.show()
     }
+
+    override fun modifyItemState(itemObjectId: String, isDone: Boolean) {
+        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
+        itemReference.child("done").setValue(isDone);
+    }
+    //delete an item
+    override fun onItemDelete(itemObjectId: String) {
+        //get child reference in database via the ObjectID
+        val itemReference = mDatabase.child(Constants.FIREBASE_ITEM).child(itemObjectId)
+        //deletion can be done via removeValue() method
+        itemReference.removeValue()
+    }
+
 }
 

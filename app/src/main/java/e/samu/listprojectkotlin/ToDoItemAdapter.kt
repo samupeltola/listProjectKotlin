@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 
 class ToDoItemAdapter(context: Context, toDoItemList: MutableList<ToDoItem>) : BaseAdapter() {
+    private var rowListener: ItemRowListener = context as ItemRowListener
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private var itemList = toDoItemList
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -28,6 +29,12 @@ class ToDoItemAdapter(context: Context, toDoItemList: MutableList<ToDoItem>) : B
         }
         vh.label.text = itemText
         vh.isDone.isChecked = done
+
+        vh.isDone.setOnClickListener {
+            rowListener.modifyItemState(objectId, !done) }
+        vh.ibDeleteObject.setOnClickListener {
+            rowListener.onItemDelete(objectId) }
+
         return view
     }
     override fun getItem(index: Int): Any {
